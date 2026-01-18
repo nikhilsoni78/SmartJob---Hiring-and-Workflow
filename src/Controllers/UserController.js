@@ -3,6 +3,7 @@ const {
   changeRoleService,
   getAllUser,
   changeAccStatus,
+  changePassword,
 } = require("../Service/UserService");
 const { StatusCodes } = require("http-status-codes");
 
@@ -26,8 +27,14 @@ const changeStatus = async (req, res) => {
     });
 };
 
+const changePasswordController = async(req, res) => {
+  const user = await changePassword(req.body, req.user);
+  res.status(StatusCodes.OK).json({ success: true, data: user });
+}
+
 module.exports = {
   changeRole,
   getAll,
   changeStatus,
+  changePasswordController,
 };

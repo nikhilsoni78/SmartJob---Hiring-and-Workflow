@@ -7,10 +7,12 @@ const jobRouter = require("./Routes/JobRoute");
 const ApplicationRouter = require("./Routes/ApplicationRoute.js");
 const errorHandler = require("./Middlewares/CustomErrorMiddleware");
 const authMiddleware = require("./Middlewares/AuthMiddleware.js");
+const cookieParser = require('cookie-parser');
 
 // Express App
 const app = express();
 app.use(express.json());
+app.use(cookieParser())
 
 //Middlewares
 app.use("/api/auth", userRouter);
