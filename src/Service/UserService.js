@@ -1,4 +1,5 @@
 const User = require("../Models/User");
+
 const {
   BadRequestError,
   UnauthorizedError,
@@ -58,7 +59,6 @@ const loginService = async (body) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
-  console.log(user);
   if (!user) {
     throw new UnauthorizedError("Invalid Credentials");
   }
@@ -69,6 +69,16 @@ const loginService = async (body) => {
 
   return user;
 };
+
+const logoutService = async(user) =>{
+  const fetchedUser = await User.findById(user.userId);
+  if (!fetchedUser) {
+    throw new NotfoundError(`No user found with id: ${user.userId}`);
+  }
+  fetchedUser.refreshToken = null;
+  await fetchedUser.save();
+  return fetchedUser;
+}
 
 const changeRoleService = async (body, userId) => {
   const { role } = body;
@@ -106,7 +116,7 @@ const changePassword = async (body, user) => {
   if (!newPassword) {
     throw new BadRequestError("Password is mandatory");
   }
-  const user = await User.findOneAndUpdate(
+  const dbUser = await User.findOneAndUpdate(
     { _id: user.userId },
     { password: newPassword },
     {
@@ -114,10 +124,10 @@ const changePassword = async (body, user) => {
       runValidators: true,
     },
   );
-  if (!user) {
+  if (!dbUser) {
     throw new NotfoundError(`User not found with id: ${user.userId}`);
   }
-  return user;
+  return dbUser;
 };
 
 module.exports = {
@@ -128,4 +138,5 @@ module.exports = {
   changeAccStatus,
   refreshTokenService,
   changePassword,
+  logoutService,
 };

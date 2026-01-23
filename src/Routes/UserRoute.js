@@ -8,11 +8,19 @@ const {
   getAll,
   changeStatus,
   changePasswordController,
+  logout,
 } = require("../Controllers/UserController.js");
 
 router.route("/login").post(login);
 router.route("/register").post(register);
 
+router
+  .route("/user/logout")
+  .get(
+    authMiddleware,
+    roleMiddleware("ADMIN", "EMPLOYER", "CANDIDATE"),
+    logout,
+  );
 router
   .route("/refresh")
   .post(
